@@ -72,3 +72,5 @@ Des comptes de démonstration sont générés lors du seeding :
 | user0015    | user0015@example.com | `password` |
 
 Lors du seeding, des exemples de contributions Soundcloud sont utilisés. Ces exemples sont récupérés à partir du fichier [TrackSamples.php](database/Samples/TrackSamples.php).
+
+test
