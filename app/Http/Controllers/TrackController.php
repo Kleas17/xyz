@@ -59,8 +59,14 @@ class TrackController extends Controller
     
         DB::beginTransaction();
     
-        $track = Track::with('category')->findOrFail($id);
-                
+        // Créer une nouvelle instance de Track
+        $track = new Track();
+    
+        $track->title = $validated['title'];
+        $track->artist = $validated['artist'];
+        $track->url = $validated['url'];
+        $track->category_id = $validated['category_id'];
+    
         $track->user()->associate($request->user());
         $track->week()->associate(Week::current());
     
@@ -71,8 +77,6 @@ class TrackController extends Controller
             $track->player_track_id = $details->track_id;
             $track->player_thumbnail_url = $details->thumbnail_url;
     
-            $track->category_id = $validated['category_id'];
-    
             $track->save();
     
             DB::commit();
@@ -81,8 +85,10 @@ class TrackController extends Controller
             throw $th;
         }
     
-        return view('tracks.show', compact('track'));
-
+        return redirect()->route('app.tracks.show', [
+            'week' => Week::current()->uri,
+            'track' => $track->id,
+        ]);
     }
 
     /**
