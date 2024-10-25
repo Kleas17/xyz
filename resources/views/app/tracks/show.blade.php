@@ -14,6 +14,13 @@
                 <dt>Titre</dt>
                 <dd>{{ $track->title }}</dd>
 
+                <dt>Catégorie</dt>
+                @if (is_object($track->category))
+                    <a href="{{ route('app.categories.show', ['category' => $track->category->id]) }}" class="link">{{ $track->category->name }}</a>
+                @else
+                    <span>{{ $track->category }}</span>
+                @endif
+
                 <dt>Contributeur</dt>
                 <dd class="flex-center">
                     <x-avatar size="medium" :src="$track->user->avatar" /> {{ $track->user->username }}
@@ -23,15 +30,8 @@
                 <dd>
                     {!! $embed !!}
                 </dd>
-
-
                 
-                <dt>Catégorie</dt>
-                @if (is_object($track->category))
-                    <a href="{{ route('app.categories.show', ['category' => $track->category->id]) }}" class="link">{{ $track->category->name }}</a>
-                @else
-                    <span>{{ $track->category }}</span>
-                @endif
+
 
             </dl>
         </section>

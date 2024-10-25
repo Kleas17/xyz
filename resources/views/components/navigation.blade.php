@@ -4,6 +4,10 @@
             <a href="{{ route('app.home') }}"><span class="logo"><h1>XYZ</h1></span></a>
         </li>
 
+        <li @class(['current' => request()->routeIs('app.categories.index')])>
+            <a href="">CATÉGORIES</a>
+        </li>
+
         @auth
         <li @class(['current' => request()->routeIs('app.weeks.*', 'app.tracks.show')])>
             @if (request()->routeIs('app.tracks.show'))
