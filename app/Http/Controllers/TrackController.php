@@ -35,9 +35,22 @@ class TrackController extends Controller
      */
     public function create(UserService $user): View
     {
+        $categories = [
+            'Soul',
+            'Ambient',
+            'Pop',
+            'Rap',
+            'Funk',
+            'Rock',
+            'Reggae / Dub',
+            'Techno',
+            'Electro'
+        ];
+    
         return view('app.tracks.create', [
             'week' => Week::current(),
             'remaining_tracks_count' => $user->remainingTracksCount(),
+            'categories' => $categories,
         ]);
     }
 
@@ -103,4 +116,6 @@ class TrackController extends Controller
             'track' => $track,
         ]);
     }
+
+    
 }
