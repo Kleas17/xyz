@@ -5,7 +5,7 @@
         </li>
 
         <li @class(['current' => request()->routeIs('app.categories.index')])>
-            <a href="">CATÉGORIES</a>
+            <a href="{{ route('app.categories.index') }}">CATÉGORIES</a>
         </li>
 
         @auth
