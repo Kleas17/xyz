@@ -12,6 +12,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use App\Models\Category;
 
 class TrackController extends Controller
 {
@@ -22,7 +23,7 @@ class TrackController extends Controller
     {
         return view('app.tracks.show', [
             'week' => $week->loadCount('tracks'),
-            'track' => $track->loadCount('likes'),
+            'track' => $track->load('category')->loadCount('likes'),
             'tracks_count' => $week->tracks_count,
             'position' => $week->getTrackPosition($track),
             'liked' => $request->user()->likes()->whereTrackId($track->id)->exists(),
@@ -35,22 +36,10 @@ class TrackController extends Controller
      */
     public function create(UserService $user): View
     {
-        $categories = [
-            'Soul',
-            'Ambient',
-            'Pop',
-            'Rap',
-            'Funk',
-            'Rock',
-            'Reggae / Dub',
-            'Techno',
-            'Electro'
-        ];
-    
         return view('app.tracks.create', [
             'week' => Week::current(),
             'remaining_tracks_count' => $user->remainingTracksCount(),
-            'categories' => $categories,
+            'categories' => Category::all(),
         ]);
     }
 
@@ -60,44 +49,40 @@ class TrackController extends Controller
     public function store(Request $request, Player $player): RedirectResponse
     {
         $this->authorize('create', Track::class);
-
+    
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'artist' => ['required', 'string', 'max:255'],
             'url' => ['required', 'url', new PlayerUrl()],
+            'category_id' => ['required', 'exists:categories,id'],
         ]);
-
+    
         DB::beginTransaction();
-
-        // Set track title, artist and url
-        $track = new Track($validated);
-
-        // Set track's user + week
+    
+        $track = Track::with('category')->findOrFail($id);
+                
         $track->user()->associate($request->user());
         $track->week()->associate(Week::current());
-
+    
         try {
-            // Fetch track detail from provider (YT, SC)
             $details = $player->details($track->url);
-
-            // Set player_id, track_id and thumbnail_url
+    
             $track->player = $details->player_id;
             $track->player_track_id = $details->track_id;
             $track->player_thumbnail_url = $details->thumbnail_url;
-
-            // Publish track
+    
+            $track->category_id = $validated['category_id'];
+    
             $track->save();
-
+    
             DB::commit();
         } catch (PlayerException $th) {
             DB::rollBack();
             throw $th;
         }
+    
+        return view('tracks.show', compact('track'));
 
-        return redirect()->route('app.tracks.show', [
-            'week' => $track->week->uri,
-            'track' => $track,
-        ]);
     }
 
     /**

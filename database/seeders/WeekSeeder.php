@@ -31,6 +31,17 @@ class WeekSeeder extends Seeder
                 'week_ends_at' => $period->getEndDate()->format("Y-m-d H:i:s"),
             ]);
 
-        Week::insert($weeks->toArray());
+        foreach ($weeks as $weekData) {
+            Week::firstOrCreate(
+                [
+                    'year' => $weekData['year'],
+                    'week_number' => $weekData['week_number']
+                ],
+                [
+                    'week_starts_at' => $weekData['week_starts_at'],
+                    'week_ends_at' => $weekData['week_ends_at']
+                ]
+            );
+        }
     }
 }

@@ -37,16 +37,16 @@
 
                 <div>
                     <label for="category_id">Catégorie</label>
-                    <select name="category_id" id="category_id">
-                        <option value="" selected disabled>Sélectionner une catégorie</option>
+                    <select name="category_id" id="category_id" required>
+                        <option value="" disabled selected>Sélectionner une catégorie</option>
                         @foreach ($categories as $category)
-                        <option value="{{ $category }}">{{ $category }}</option>
+                            <option value="{{ $category->id }}">{{ $category->name }}</option>
                         @endforeach
                     </select>
                 </div>
 
                 @error('category_id')
-                <p class="error-message">{{ $message }}</p>
+                    <p class="error-message">{{ $message }}</p>
                 @enderror
 
                 <div class="submit">

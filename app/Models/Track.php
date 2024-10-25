@@ -17,11 +17,8 @@ class Track extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'title',
-        'artist',
-        'url',
-    ];
+    protected $fillable = ['title', 'artist', 'url', 'player', 'player_track_id', 'player_thumbnail_url', 'category_id', 'user_id', 'week_id'];
+
 
     /**
      * Get the user who shared this track.
@@ -66,5 +63,27 @@ class Track extends Model
         return $query->withCount('likes')
             ->orderBy('likes_count', 'desc')
             ->orderBy('created_at', 'asc');
+    }
+
+    protected static $categories = [
+        1 => 'Soul',
+        2 => 'Ambient',
+        3 => 'Pop',
+        4 => 'Rap',
+        5 => 'Funk',
+        6 => 'Rock',
+        7 => 'Reggae / Dub',
+        8 => 'Techno',
+        9 => 'Electro'
+    ];
+
+    public function getCategoryAttribute()
+    {
+        return self::$categories[$this->category_id] ?? 'Unknown';
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
     }
 }

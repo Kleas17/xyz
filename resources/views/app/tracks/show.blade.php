@@ -23,6 +23,16 @@
                 <dd>
                     {!! $embed !!}
                 </dd>
+
+
+                
+                <dt>Catégorie</dt>
+                @if (is_object($track->category))
+                    <a href="{{ route('app.categories.show', ['category' => $track->category->id]) }}" class="link">{{ $track->category->name }}</a>
+                @else
+                    <span>{{ $track->category }}</span>
+                @endif
+
             </dl>
         </section>
 
